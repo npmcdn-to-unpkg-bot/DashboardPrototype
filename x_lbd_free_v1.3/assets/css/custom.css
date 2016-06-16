@@ -1,0 +1,32 @@
+.custom-warning {
+  border: 2px red solid;
+  background-color: lightcoral;
+  color: white;
+}
+
+.list-group-item.custom-warning {
+  border-bottom-width: 3px;
+}
+
+#refresh-time:hover {
+  color: red;
+}
+
+.custom-stats {
+  float: right;
+  font-weight: 600;
+}
+
+path {
+  stroke: #1DC7EA;
+  stroke-width: 2;
+  fill: none;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: grey;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
