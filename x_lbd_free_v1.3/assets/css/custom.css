@@ -30,3 +30,12 @@ path {
   stroke-width: 1;
   shape-rendering: crispEdges;
 }
+
+.arc text {
+  text-anchor: middle;
+  font: 10px;
+}
+
+.arc path {
+  stroke: black;
+}

@@ -9,17 +9,17 @@ $(document).ready(function() {
 });
 
 var totalRevenueChart = function () {
-  var exampleData = [
-    {date:"1-May-12",close:"58.13"},
-     {date:"30-Apr-12",close:"53.98"},
-     {date:"27-Apr-12",close:"67.00"},
-     {date:"26-Apr-12",close:"89.70"},
-     {date:"25-Apr-12",close:"99.00"}
-  ];
+  // var exampleData = [
+  //   {date:"1-May-12",close:"58.13"},
+  //    {date:"30-Apr-12",close:"53.98"},
+  //    {date:"27-Apr-12",close:"67.00"},
+  //    {date:"26-Apr-12",close:"89.70"},
+  //    {date:"25-Apr-12",close:"99.00"}
+  // ];
 
   var parseDate = d3.time.format("%d-%b-%y").parse;
 
-  var data = exampleData.slice();
+  // var data = exampleData.slice();
   var dateFn = function(d) { return parseDate(d.date); };
   var closeFn = function(d) { return d.close; };
 
@@ -28,7 +28,8 @@ var totalRevenueChart = function () {
   var height = totalRevenueDOM.clientHeight - margin.top - margin.bottom;
   var width = totalRevenueDOM.clientWidth - margin.right-margin.left;
 
-  var x = d3.time.scale().range([0, width]);
+  // var x = d3.time.scale().range([0, width]);
+  var x = d3.scale.linear().range([0, width]);
   var y = d3.scale.linear().range([height, 0]);
 
   var xAxis = d3.svg.axis().scale(x)
@@ -38,12 +39,12 @@ var totalRevenueChart = function () {
       .orient("left").ticks(5);
 
   var valueline = d3.svg.line()
-      .x(dateFn)
-      .y(closeFn);
+      .x(function(d) { return x(d['JURISDICTION NAME']); })
+      .y(function(d) { return y(d['COUNT PARTICIPANTS']); });
 
-  for(var i = 0; i < data.length; i ++) {
-    console.log(parseDate(data.date).toString() + ", " + data.close);
-  }
+  // for(var i = 0; i < data.length; i ++) {
+  //   console.log(parseDate(data.date).toString() + ", " + data.close);
+  // }
 
   var svg = d3.select("#history-total-revenue")
       .append("svg")
@@ -53,27 +54,37 @@ var totalRevenueChart = function () {
           .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-  x.domain(d3.extent(data, dateFn));
-  y.domain([0, d3.max(data, closeFn)]);
+  d3.csv("https://rawgit.com/dchen97/DashboardPrototype/master/x_lbd_free_v1.3/assets/Demographic_Statistics_By_Zip_Code.csv", function(error, data) {
+      data.forEach(function(d) {
+        d['JURISDICTION NAME'] = +d['JURISDICTION NAME'];
+        d['COUNT PARTICIPANTS'] = +d['COUNT PARTICIPANTS'];
+      });
 
-  svg.append("path")
-      .attr("class", "line")
-      .attr("d", valueline(data));
+      x.domain(d3.extent(data, function(d) { return d['JURISDICTION NAME']; }));
+      y.domain([0, d3.max(data, function(d) { return d['COUNT PARTICIPANTS']; })]);
 
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      svg.append("path")
+          .attr("class", "line")
+          .attr("d", valueline(data));
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis);
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis);
+  });
 }
 
 var tcBillStatus = function() {
-  var exampleData = [
+    var tcBillStatusDOM = document.getElementById('tc-bill-status');
+    var margin = {top: 30, right: 20, left: 30, bottom: 30 };
+    var height = tcBillStatusDOM.clientHeight - margin.top - margin.bottom;
+    var width = tcBillStatusDOM.clientWidth - margin.right-margin.left;
+    var radius = Math.min(width, height) / 2;
 
-  ]
 }
 //
 // document.getElementById('history-total-revenue').addEventListener("resize", function() {
