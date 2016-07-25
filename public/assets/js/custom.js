@@ -100,7 +100,7 @@ var clear = function(id) {
   }
 }
 
-var tcBillStatus = function() {
+var tcBillStatus = function(data) {
     clear('tc-bill-status');
     var tcBillStatusDOM = document.getElementById('tc-bill-status');
     // while(tcBillStatusDOM.hasChildNodes()) {

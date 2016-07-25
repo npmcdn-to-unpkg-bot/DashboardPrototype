@@ -2,10 +2,13 @@
 var express = require('express');
 var config = require(__dirname + '/../config.js');
 var auth = require(__dirname + '/../data/auth.js');
+var async = require('async');
 var overview = require(__dirname + '/../data/overview.js');
 var tc = require(__dirname + '/../data/tc.js');
+var history = require(__dirname + "/../data/history.js");
+var omegaAr = require(__dirname + "/../data/omegaar.js");
+
 var router;
-var async = require('async');
 
 var getTime = function() {
   return new Date();
@@ -13,50 +16,177 @@ var getTime = function() {
 
 router = express.Router();
 
-router.get('/refresh',  function (req, res, next) {
-  var authData;
-  var overviewData;
-  var tcData;
+// router.get('/refresh',  function (req, res, next) {
+//   var authData;
+//   var overviewData;
+//   var tcData;
+//
+//   auth.getAccountsAttempted(function(err, accounts) {
+//     if (err) {
+//       throw err;
+//
+//       return;
+//     }
+//
+//     authData = { data: accounts };
+//   });
+//
+//   overview.getToBeBilled(function(err, accounts) {
+//     if (err) {
+//       throw err;
+//
+//       return;
+//     }
+//
+//     overviewData = { data: accounts };
+//   });
+//
+//   tc.getBillPlans(function(err, accounts) {
+//     if (err) {
+//       throw err;
+//
+//       return;
+//     }
+//
+//     tcData = { data: accounts };
+//   });
+//
+//   // res.
+// });
+//
+// router.get('/overview', function(req, res, next) {
+//   overview.getToBeBilled(function(err, accounts) {
+//     if(err) {
+//       throw err;
+//
+//       return;
+//     }
+//
+//     res.status(200).send(accounts);
+//   });
+// });
 
-  auth.getAccountsAttempted(function(err, accounts) {
+router.get('/update/overview', function(req, res, next) {
+  var data = {
+    "orderInformation": {},
+    'subscriptionInformation': {},
+    'invoiceInformation': {},
+    'renewalInformation': {},
+    'revenueInformation': {},
+    'tcInformation': {}
+  };
+
+  async.series([
+      async.parallel([
+      overview.getOrderInformation(function(err, results) {
+        if (err) {
+          throw err;
+
+          return;
+        }
+
+        data.orderInformation = results;
+      }),
+      overview.getSubscriptionInformation(function(err, results) {
+        if (err) {
+          throw err;
+
+          return;
+        }
+
+        data.subscriptionInformation = results;
+      }),
+      overview.getInvoiceInformation(function(err, results) {
+        if (err) {
+          throw err;
+
+          return;
+        }
+
+        data.invoiceInformation = results;
+      }),
+      overview.getRenewalInformation(function(err, results) {
+        if (err) {
+          throw err;
+
+          return;
+        }
+
+        data.renewalInformation = results;
+      }),
+      overview.getRevenueInformation(function(err, results) {
+        if (err) {
+          throw err;
+
+          return;
+        }
+
+        data.revenueInformation = results;
+      }),
+      overview.getTcInformationOv(function(err, results) {
+        if (err) {
+          throw err;
+
+          return;
+        }
+
+        data.tcInformation = results;
+      })
+    ]),
+
+    res.status(200).json({'overview': data})
+  ])
+});
+
+router.get('/update/tc', function(req, res, next) {
+  tc.getTcInformation(function(err, data) {
     if (err) {
       throw err;
 
       return;
     }
 
-    authData = { data: accounts; };
+    res.status(200).json({'tc': data});
   });
+});
 
-  overview.getToBeBilled(function(err, accounts) {
+router.get('/update/auth', function(req, res, next) {
+  auth.getAuthInformation(function(err, data) {
     if (err) {
       throw err;
 
       return;
     }
 
-    overviewData = { data: accounts; };
+    res.status(200).json({'auth': data});
   });
+});
 
-  tc.getBillPlans(function(err, accounts) {
+router.get('/update/omegaAr', function(req, res, next) {
+  omegaAr.getOmegaArInformation(function(err, data) {
     if (err) {
       throw err;
 
       return;
     }
 
-    tcData = { data: accounts; };
+    res.status(200).json({'omegaAr':data});
   });
+});
 
-  res.
+router.get('/update/history/:startDate/:endDate', function (req, res, next) {
+  var startDate = req.params.startDate;
+  var endDate = req.params.endDate;
+
+  history.getHistoryInformation(startDate, endDate, function(err, data) {
+    if (err) {
+      next(err);
+
+      return;
+    }
+
+    res.status(200).json({'history' : data});
+  });
 });
 
 module.exports.router = router;
-// module.exports = function(app) {
-//   // app.get('/api/data', function(req, res) {
-//   //
-//   // })
-//   app.get('*', function(req, res) {
-//     res.sendfile('./public/officehome.html');
-//   });
-// }

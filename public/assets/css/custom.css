@@ -147,6 +147,10 @@ body > .navbar-collapse[data-color="dell-blue"]:after {
   color: #00386B !important;
 }
 
+.text-red {
+  color: rgb(255, 9, 9) !important;
+}
+
 div.tooltip {
   position: absolute;
   text-align: center;
@@ -165,7 +169,11 @@ div.tooltip {
   margin-left:20%;
 }
 
-@media screen and (max-width: 480px) {
+.ct-chart svg {
+  float: right;
+}
+
+@media screen and (max-width: 640px) {
   .ct-chart svg {
     float: right;
   }

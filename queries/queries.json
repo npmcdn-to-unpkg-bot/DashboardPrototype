@@ -1,0 +1,9 @@
+{
+  "ordersReceivedToDate":"SELECT count(*) FROM fbs_dell_order_t",
+  "ordersActivatedToDate":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=1",
+  "ordersPendingToDate":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=2",
+  "ordersWErrorToDate":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=3",
+  "ordersReceivedRange":"SELECT count(*) FROM fbs_dell_order_t WHERE created_t>= :start AND created_t< :end",
+  "ordersActivatedRange":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=2 AND created_t>=:start AND created_t< :end",
+  "ordersPendingRange":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=3 AND created_t>=:start AND created_t<:end"
+};

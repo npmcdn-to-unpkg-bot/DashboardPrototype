@@ -20,7 +20,10 @@
       "mongoose" : "~3.8.0",
     	"body-parser" : "~1.4.2",
     	"method-override" : "~2.0.2",
-      "oracledb":"^1.9.3"
+      "oracledb":"~1.9.3",
+      "angular":"~1.5.7",
+      "async":"~1.4.0",
+      "fs":"^6.3.1"
   },
   "homepage": "https://github.com/dchen97/DashboardPrototype#readme"
 }
