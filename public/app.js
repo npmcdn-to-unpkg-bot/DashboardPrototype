@@ -1,19 +1,25 @@
 // 'use strict';
 (function() {
-  // angular.module('officeTestApp', [])
-  //     .constant('API_URL', '/api/v1/')
-  //
-  //     .controller('TestCtrl', ['$http', 'API_URL', function($http, API_URL) {
-  //         this.text = "";
-  //         var ctrl = this;
-  //         $http.get(API_URL + 'overview')
-  //             .then(function success(res) {
-  //                 ctrl.text = res.data;
-  //                 console.log('success');
-  //             }, function error(res) {
-  //                 alert('danger','Fetch failed', res.error);
-  //             });
-  //       }]);
+  angular.module('officeTestApp', [])
+      .constant('API_URL', '/api/v1/')
+
+      .controller('TestCtrl', ['$http', 'API_URL', function($http, API_URL) {
+          this.data = "";
+          var ctrl = this;
+          console.log(API_URL + 'test');
+          $http.get(API_URL + 'test')
+              .then(function success(res) {
+                if (res.status != 200) {
+                  console.log('API error status: ' + status);
+                } else {
+                  ctrl.data = res.data;
+                  console.log(res.data.length);
+                }
+              }, function error(res) {
+                console.log('Error: ' + res.error);
+                alert('fetch failed','Fetch failed', res.error);
+              });
+        }]);
 
     var dashboard = angular.module('dashboard', [])
         .constant('API_URL', '/api/v1/');

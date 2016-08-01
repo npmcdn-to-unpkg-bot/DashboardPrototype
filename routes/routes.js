@@ -7,6 +7,8 @@ var overview = require(__dirname + '/../data/overview.js');
 var tc = require(__dirname + '/../data/tc.js');
 var history = require(__dirname + "/../data/history.js");
 var omegaAr = require(__dirname + "/../data/omegaar.js");
+var test = require(__dirname + "/../data/test.js");
+var newOverview = require(__dirname + "/../data/newOverview.js");
 
 var router;
 
@@ -66,6 +68,20 @@ router = express.Router();
 //   });
 // });
 
+router.get('/test', function(req, res, next) {
+  console.log('router reached');
+  newOverview.getOrderInformation(function(err, data) {
+    if (err) {
+      next(err);
+      console.log('Not working at router level');
+
+      return;
+    }
+    console.log('Success at router.js level');
+    res.status(200).json(data);
+  });
+});
+
 router.get('/update/overview', function(req, res, next) {
   var data = {
     "orderInformation": {},
@@ -76,66 +92,136 @@ router.get('/update/overview', function(req, res, next) {
     'tcInformation': {}
   };
 
-  async.series([
-      async.parallel([
-      overview.getOrderInformation(function(err, results) {
-        if (err) {
-          throw err;
+  overview.getOrderInformation(function(err, results) {
+    if (err) {
+      console.log("Error on Order Info retrieval");
+      console.error(err);
+      throw err;
 
-          return;
-        }
+      return;
+    }
 
-        data.orderInformation = results;
-      }),
-      overview.getSubscriptionInformation(function(err, results) {
-        if (err) {
-          throw err;
+    data.orderInformation = results;
+    overview.getSubscriptionInformation(function(err, results) {
+      if (err) {
+        console.log("Error on Subscription Info Retrieval");
+        console.error(err);
 
-          return;
-        }
+        throw err;
 
-        data.subscriptionInformation = results;
-      }),
+        return;
+      }
+
+      data.subscriptionInformation = results;
       overview.getInvoiceInformation(function(err, results) {
         if (err) {
+          console.log("Error on Invoice Info Retrieval");
+          console.error(err);
+
           throw err;
 
           return;
         }
 
         data.invoiceInformation = results;
-      }),
-      overview.getRenewalInformation(function(err, results) {
-        if (err) {
-          throw err;
+        overview.getRenewalInformation(function(err, results) {
+          if (err) {
+            console.log("Error on Renewal Info Retrieval");
+            console.error(err);
 
-          return;
-        }
+            throw err;
 
-        data.renewalInformation = results;
-      }),
-      overview.getRevenueInformation(function(err, results) {
-        if (err) {
-          throw err;
+            return;
+          }
 
-          return;
-        }
+          data.renewalInformation = results;
+          overview.getRevenueInformation(function(err, results) {
+            if (err) {
+              console.log("Error on Revenue Info Retrieval");
+              console.error(err);
 
-        data.revenueInformation = results;
-      }),
-      overview.getTcInformationOv(function(err, results) {
-        if (err) {
-          throw err;
+              throw err;
 
-          return;
-        }
+              return;
+            }
 
-        data.tcInformation = results;
-      })
-    ]),
+            data.revenueInformation = results;
+            overview.getTcInformationOv(function(err, results) {
+              if (err) {
+                throw err;
 
-    res.status(200).json({'overview': data})
-  ])
+                return;
+              }
+
+              data.tcInformation = results;
+
+              res.status(200).json({'overview': data})
+            });
+          });
+        });
+      });
+    });
+  });
+  // async.series([
+  //     async.parallel([
+  //     overview.getOrderInformation(function(err, results) {
+  //       if (err) {
+  //         throw err;
+  //
+  //         return;
+  //       }
+  //
+  //       data.orderInformation = results;
+  //     }),
+  //     overview.getSubscriptionInformation(function(err, results) {
+  //       if (err) {
+  //         throw err;
+  //
+  //         return;
+  //       }
+  //
+  //       data.subscriptionInformation = results;
+  //     }),
+  //     overview.getInvoiceInformation(function(err, results) {
+  //       if (err) {
+  //         throw err;
+  //
+  //         return;
+  //       }
+  //
+  //       data.invoiceInformation = results;
+  //     }),
+  //     overview.getRenewalInformation(function(err, results) {
+  //       if (err) {
+  //         throw err;
+  //
+  //         return;
+  //       }
+  //
+  //       data.renewalInformation = results;
+  //     }),
+  //     overview.getRevenueInformation(function(err, results) {
+  //       if (err) {
+  //         throw err;
+  //
+  //         return;
+  //       }
+  //
+  //       data.revenueInformation = results;
+  //     }),
+  //     overview.getTcInformationOv(function(err, results) {
+  //       if (err) {
+  //         throw err;
+  //
+  //         return;
+  //       }
+  //
+  //       data.tcInformation = results;
+  //     })
+  //   ]),
+  //
+  //   res.status(200).json({'overview': data})
+  // ])
 });
 
 router.get('/update/tc', function(req, res, next) {

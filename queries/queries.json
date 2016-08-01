@@ -5,5 +5,19 @@
   "ordersWErrorToDate":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=3",
   "ordersReceivedRange":"SELECT count(*) FROM fbs_dell_order_t WHERE created_t>= :start AND created_t< :end",
   "ordersActivatedRange":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=2 AND created_t>=:start AND created_t< :end",
-  "ordersPendingRange":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=3 AND created_t>=:start AND created_t<:end"
-};
+  "ordersPendingRange":"SELECT count(*) FROM fbs_dell_order_t WHERE order_status=3 AND created_t>=:start AND created_t<:end",
+  "subscriptionsCancelled":"select count(*) from brm_prod.purchased_product_t pp, brm_prod.product_t p where status=3 and pp.product_obj_id0 = p.poid_id0 and p.name not in('One-time Initial Product')",
+  "subscriptionsOptOut":"SELECT count(*) FROM brm_prod.purchased_product_t pp, brm_prod.product_t p where status=1 AND pp.cycle_end_t != 0 AND pp.product_obj_id0 = p.poid_id0 AND p.name NOT in('One-time Initial Product')",
+  "subscriptionsOptIn":"select count(*) from brm_prod.purchased_product_t pp, brm_prod.product_t p where status=1 and pp.cycle_end_t = 0 and pp.product_obj_id0 = p.poid_id0 and p.name not in('One-time Initial Product')",
+  "tcRequestTotal":"select count(*) from brm_prod.dell_bill_tcc_t",
+  "tcSuccessResponse":"select count(*) from brm_prod.dell_bill_tcc_t where compliance_status=1",
+  "tcHoldResponse":"select count(*) from brm_prod.dell_bill_tcc_t where compliance_status=2",
+  "tcRejectedResponse":"select count(*) from brm_prod.dell_bill_tcc_t where compliance_status=3",
+  "revenueBilledToDate":"select sum(total_due) from brm_prod.bill_t where name='PIN Bill' and end_t!=0 and parent_id0=0",
+  "revenueCollectedToDate":"select sum(recvd) from brm_prod.authorization_response_t a, brm_prod.bill_t b where a.ar_bill_obj_id0= b.poid_id0 and a.status_flag=0",
+  "revenueDeclinedToDate":"select sum(total_due) from brm_prod.authorization_response_t a, brm_prod.bill_t b where a.ar_bill_obj_id0= b.poid_id0 and a.status_flag!=0 and a.status_flag!=17",
+  "revenueWithErrorToDate":"select sum(total_due) from brm_prod.authorization_response_t a, brm_prod.bill_t b where a.ar_bill_obj_id0= b.poid_id0 and a.status_flag=17",
+  "revenueWithComFailureToDate":"select count(*) from brm_prod.event_billing_charge_t where command=4 and result=999",
+  "renewalRequestTotal":"select count(*) from brm_prod.authorization_response_t where status_flag=0 and provisioning_flag!=0 and provisioning_flag!=999",
+  "renewalResponsesReceived":"select count(*) from brm_prod.authorization_response_t where status_flag=0 and provisioning_flag=4"
+}

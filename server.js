@@ -16,9 +16,13 @@ app.use(bodyParser.json());
 
 // app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.static(__dirname + '/public'));
-app.use('/api/v1', routes.router);
-// require('./app/routes')(app);
+app.use('/api/v1/', routes.router);
+app.use(function(err, req, res, next) {
+  console.error(err);
+  res.status(500).send();
+});
 
-app.listen(port);
-console.log('magic happens on port ' + port);
+app.listen(port, function() {
+  console.log('magic happens on port ' + port);
+});
 exports = module.exports = app;
