@@ -16,6 +16,7 @@ var clear = function(id) {
 }
 
 var tcBillStatus = function(data, ids) {
+  var ids = JSON.parse(ids);
   clear(ids.chartId);
   var tcBillStatusDOM = document.getElementById(ids.chartId);
   var margin= {top: 30, right: 20, left: 50, bottom: 30 };

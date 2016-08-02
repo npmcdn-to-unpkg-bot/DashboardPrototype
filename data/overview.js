@@ -344,6 +344,10 @@ function getOrderInformation(cb) {
                       )
                         .then(function(result) {
                           results.ordersWError = result.rows[0][0];
+                          console.log("orders received: " + results.ordersReceived);
+                          console.log("orders activated: " + results.ordersActivated);
+                          console.log("orders pending: " + results.ordersPending);
+                          console.log("orders with error: " + results.ordersWError);
                           cb(null, results);
                           return connection.close();
                         })
@@ -536,10 +540,8 @@ function getInvoiceInformation(cb) {
   var results = {
     "brSent": "",
     "brReceived": "",
-    "cmSent": "",
-    "cmReceived": "",
-    "dmSent": "",
-    "dmReceived": ""
+    "cmDmSent": "",
+    "cmDmReceived": ""
   };
 
   var queries = "";
@@ -557,17 +559,42 @@ function getInvoiceInformation(cb) {
     })
       .then(function(connection) {
         return connection.execute(
-          queries.ordersReceivedToDate,[]
+          queries.invoiceBrSent,[]
         )
           .then(function(result) {
-            results.brSent = Math.random() * 1000 + 1;
-            results.brReceived = Math.random() * 1000 + 1;
-            results.cmSent = Math.random() * 1000 + 1;
-            results.cmReceived = Math.random() * 1000 + 1;
-            results.dmSent = Math.random() * 1000 + 1;
-            results.dmReceived = Math.random() * 1000 + 1;
-            cb(null, results);
-            return connection.close();
+            results.brSent = result.rows[0][0];
+            connection.execute(
+              queries.invoiceBrReceived, []
+            )
+              .then(function(result) {
+                results.brReceived = result.rows[0][0];
+                connection.execute(
+                  queries.invoiceCmDmSent, []
+                )
+                  .then(function(result) {
+                    results.cmDmSent = result.rows[0][0];
+                    connection.execute(
+                      queries.invoiceCmDmReceived, []
+                    )
+                      .then(function(result) {
+                        results.cmDmReceived = result.rows[0][0];
+                        cb(null, results);
+                        return connection.close();
+                      })
+                      .catch(function(err) {
+                        cb(err);
+                        return connection.close();
+                      });
+                  })
+                  .catch(function(err) {
+                    cb(err);
+                    return connection.close();
+                  });
+              })
+              .catch(function(err) {
+                cb(err);
+                return connection.close();
+              });
           })
           .catch(function(err) {
             cb(err);
@@ -1074,7 +1101,7 @@ function getTcInformationOv(cb) {
     }
 
     queries = JSON.parse(data);
-    
+
     oracledb.getConnection({
       user          : config.database.user,
       password      : config.database.password,

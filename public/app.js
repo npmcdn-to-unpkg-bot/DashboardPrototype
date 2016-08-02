@@ -151,7 +151,10 @@
       this.update = function() {
         $http.get(API_URL + 'update/overview')
             .then(function success(res) {
+              console.log(res.data);
               ctrl.data = res.data;
+              console.log("data " + ctrl.data.toString());
+              console.log(ctrl.data.overview.orderInformation.ordersReceived);
               updateOverview(ctrl.data);
               tcBillStatus(ctrl.data, {'chartId':'ov-tc-status', 'tooltipId':'ov-tc-info', 'tooltipHeadingId':'ov-tc-info-status'});
             }, function error(res) {
